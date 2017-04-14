@@ -20,7 +20,7 @@
 // MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 
 
-public protocol ArithmeticType : Hashable, Comparable, IntegerLiteralConvertible {
+public protocol ArithmeticType : Hashable, Comparable, ExpressibleByIntegerLiteral {
     init(_: Double)
     init(_: Float)
     init(_: Int)
@@ -33,28 +33,28 @@ public protocol ArithmeticType : Hashable, Comparable, IntegerLiteralConvertible
     init(_: UInt32)
     init(_: Int64)
     init(_: UInt64)
-    func +(_: Self, _: Self) -> Self
-    func +=(inout _: Self, _: Self)
-    func -(_: Self, _: Self) -> Self
-    func -=(inout _: Self, _: Self)
-    func *(_: Self, _: Self) -> Self
-    func *=(inout _: Self, _: Self)
-    func /(_: Self, _: Self) -> Self
-    func /=(inout _: Self, _: Self)
-    func %(_: Self, _: Self) -> Self
-    func %=(inout _: Self, _: Self)
+    static func +(_: Self, _: Self) -> Self
+    static func +=(_: inout Self, _: Self)
+    static func -(_: Self, _: Self) -> Self
+    static func -=(_: inout Self, _: Self)
+    static func *(_: Self, _: Self) -> Self
+    static func *=(_: inout Self, _: Self)
+    static func /(_: Self, _: Self) -> Self
+    static func /=(_: inout Self, _: Self)
+    static func %(_: Self, _: Self) -> Self
+    static func %=(_: inout Self, _: Self)
 }
 
-public protocol FloatingPointArithmeticType : ArithmeticType, FloatingPointType, SignedNumberType, FloatLiteralConvertible {}
+public protocol FloatingPointArithmeticType : ArithmeticType, FloatingPoint, SignedNumber, ExpressibleByFloatLiteral {}
 extension Double: FloatingPointArithmeticType {}
 extension Float: FloatingPointArithmeticType {}
 
 // Swift didn't put these in BitwiseOperationsType
-public protocol BitsOperationsType : ArithmeticType, BitwiseOperationsType {
-    func <<(_: Self, _: Self) -> Self
-    func <<=(inout _: Self, _: Self)
-    func >>(_: Self, _: Self) -> Self
-    func >>=(inout _: Self, _: Self)
+public protocol BitsOperationsType : ArithmeticType, BitwiseOperations {
+    static func <<(_: Self, _: Self) -> Self
+    static func <<=(_: inout Self, _: Self)
+    static func >>(_: Self, _: Self) -> Self
+    static func >>=(_: inout Self, _: Self)
 }
 extension Int: BitsOperationsType {}
 extension UInt: BitsOperationsType {}
@@ -70,75 +70,94 @@ extension UInt64: BitsOperationsType {}
 
 // Anything not a plain single scalar is considered a Matrix.
 // This includes Vectors, Complex, and Quaternion.
-public protocol MatrixType : MutableCollectionType, Hashable, Equatable, CustomDebugStringConvertible {
-    typealias Element:ArithmeticType
+public protocol MatrixType : MutableCollection, Hashable, Equatable, CustomDebugStringConvertible {
+    associatedtype Element:ArithmeticType
+    associatedtype Index = Int
+    
     init()
-    init(_: Self, @noescape _:(_:Element) -> Element)
-    init(_: Self, _: Self, @noescape _:(_:Element, _:Element) -> Element)
-    init(_: Element, _: Self, @noescape _:(_:Element, _:Element) -> Element)
-    init(_: Self, _: Element, @noescape _:(_:Element, _:Element) -> Element)
-    prefix func ++(inout _: Self) -> Self
-    postfix func ++(inout _: Self) -> Self
-    prefix func --(inout _: Self) -> Self
-    postfix func --(inout _: Self) -> Self
-    func +(_: Self, _: Self) -> Self
-    func +=(inout _: Self, _: Self)
-    func +(_: Element, _: Self) -> Self
-    func +(_: Self, _: Element) -> Self
-    func +=(inout _: Self, _: Element)
-    func -(_: Self, _: Self) -> Self
-    func -=(inout _: Self, _: Self)
-    func -(_: Element, _: Self) -> Self
-    func -(_: Self, _: Element) -> Self
-    func -=(inout _: Self, _: Element)
-    func *(_: Element, _: Self) -> Self
-    func *(_: Self, _: Element) -> Self
-    func *=(inout _: Self, _: Element)
-    func /(_: Element, _: Self) -> Self
-    func /(_: Self, _: Element) -> Self
-    func /=(inout _: Self, _: Element)
-    func %(_: Self, _: Self) -> Self
-    func %=(inout _: Self, _: Self)
-    func %(_: Element, _: Self) -> Self
-    func %(_: Self, _: Element) -> Self
-    func %=(inout _: Self, _: Element)
+    init(_: Self, _:(_:Element) -> Element)
+    init(_: Self, _: Self, _:(_:Element, _:Element) -> Element)
+    init(_: Element, _: Self, _:(_:Element, _:Element) -> Element)
+    init(_: Self, _: Element, _:(_:Element, _:Element) -> Element)
+    static prefix func ++(_: inout Self) -> Self
+    static postfix func ++(_: inout Self) -> Self
+    static prefix func --(_: inout Self) -> Self
+    static postfix func --(_: inout Self) -> Self
+    static func +(_: Self, _: Self) -> Self
+    static func +=(_: inout Self, _: Self)
+    static func +(_: Element, _: Self) -> Self
+    static func +(_: Self, _: Element) -> Self
+    static func +=(_: inout Self, _: Element)
+    static func -(_: Self, _: Self) -> Self
+    static func -=(_: inout Self, _: Self)
+    static func -(_: Element, _: Self) -> Self
+    static func -(_: Self, _: Element) -> Self
+    static func -=(_: inout Self, _: Element)
+    static func *(_: Element, _: Self) -> Self
+    static func *(_: Self, _: Element) -> Self
+    static func *=(_: inout Self, _: Element)
+    static func /(_: Element, _: Self) -> Self
+    static func /(_: Self, _: Element) -> Self
+    static func /=(_: inout Self, _: Element)
+    static func %(_: Self, _: Self) -> Self
+    static func %=(_: inout Self, _: Self)
+    static func %(_: Element, _: Self) -> Self
+    static func %(_: Self, _: Element) -> Self
+    static func %=(_: inout Self, _: Element)
+}
+
+public extension MatrixType {
+    public func index(after: Int) -> Int {
+        return after + 1
+    }
 }
 
 // This protocol is only Vector2, Vector3, and Vector4
-public protocol VectorType : MatrixType, ArrayLiteralConvertible {
-    typealias FloatVector
-    typealias DoubleVector
-    typealias Int32Vector
-    typealias UInt32Vector
-    typealias BooleanVector
+public protocol VectorType : MatrixType, ExpressibleByArrayLiteral {
+    associatedtype FloatVector
+    associatedtype DoubleVector
+    associatedtype Int32Vector
+    associatedtype UInt32Vector
+    associatedtype BooleanVector
+    
     // T.BooleanVector == BooleanVector : Must use this key with mixed types.
     subscript(_:Int) -> Element { get set }
-    init<T:VectorType where T.BooleanVector == BooleanVector>(_: T, @noescape _:(_:T.Element) -> Element)
-    init<T1:VectorType, T2:VectorType where
-        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector>
-        (_:T1, _:T2, @noescape _:(_:T1.Element, _:T2.Element) -> Element)
-    init<T1:VectorType, T2:VectorType where
-        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector>
-        (_:T1, inout _:T2, @noescape _:(_:T1.Element, inout _:T2.Element) -> Element)
-    init<T1:VectorType, T2:VectorType, T3:VectorType where
-        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector, T3.BooleanVector == BooleanVector>
-        (_:T1, _:T2, _:T3, @noescape _:(_:T1.Element, _:T2.Element, _:T3.Element) -> Element)
-    init<T1:VectorType, T2:VectorType, T3:BooleanVectorType where
-        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector, T3.BooleanVector == BooleanVector>
-        (_:T1, _:T2, _:T3, @noescape _:(_:T1.Element, _:T2.Element, _:Bool) -> Element)
-    func *(_: Self, _: Self) -> Self
-    func *=(inout _: Self, _: Self)
-    func /(_: Self, _: Self) -> Self
-    func /=(inout _: Self, _: Self)
+    init<T:VectorType>(_: T, _:(_:T.Element) -> Element) where T.BooleanVector == BooleanVector
+    init<T1:VectorType, T2:VectorType>
+        (_:T1, _:T2, _:(_:T1.Element, _:T2.Element) -> Element) where
+        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector
+    init<T1:VectorType, T2:VectorType>
+        (_:T1, _:inout T2, _: (_:T1.Element, _:inout T2.Element) -> Element) where
+        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector
+    init<T1:VectorType, T2:VectorType, T3:VectorType>
+        (_:T1, _:T2, _:T3, _:(_:T1.Element, _:T2.Element, _:T3.Element) -> Element) where
+        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector, T3.BooleanVector == BooleanVector
+    init<T1:VectorType, T2:VectorType, T3:BooleanVectorType>
+        (_:T1, _:T2, _:T3, _:(_:T1.Element, _:T2.Element, _:Bool) -> Element) where
+        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector, T3.BooleanVector == BooleanVector
+    static func *(_: Self, _: Self) -> Self
+    static func *=(_: inout Self, _: Self)
+    static func /(_: Self, _: Self) -> Self
+    static func /=(_: inout Self, _: Self)
 }
 
+
 // This protocol is only Vector2b, Vector3b, and Vector4b
-public protocol BooleanVectorType : MutableCollectionType, Hashable, Equatable, CustomDebugStringConvertible {
-    typealias BooleanVector
+public protocol BooleanVectorType : MutableCollection, Hashable, Equatable, CustomDebugStringConvertible {
+    associatedtype BooleanVector
+    
+    associatedtype Index = Int
+    
     subscript(_:Int) -> Bool { get set }
-    init(_: Self, @noescape _:(_:Bool) -> Bool)
-    init<T:VectorType where T.BooleanVector == BooleanVector>(_: T, @noescape _:(_:T.Element) -> Bool)
-    init<T1:VectorType, T2:VectorType where
-        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector>
-        (_:T1, _:T2, @noescape _:(_:T1.Element, _:T2.Element) -> Bool)
+    init(_: Self, _:(_:Bool) -> Bool)
+    init<T:VectorType>(_: T, _:(_:T.Element) -> Bool) where T.BooleanVector == BooleanVector
+    init<T1:VectorType, T2:VectorType>
+        (_:T1, _:T2, _:(_:T1.Element, _:T2.Element) -> Bool) where
+        T1.BooleanVector == BooleanVector, T2.BooleanVector == BooleanVector
+}
+
+public extension BooleanVectorType {
+    public func index(after: Int) -> Int {
+        return after + 1
+    }
 }

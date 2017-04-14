@@ -34,13 +34,13 @@ public final class SGLMath {
 
     // This is MurmurHash3 by Austin Appleby
     // https://en.wikipedia.org/wiki/MurmurHash
-    public static func hash(nums: Int...) -> Int
+    public static func hash(_ nums: Int...) -> Int
     {
-        if sizeof(Int) == 8 { // 64 bit
-            func rotl(x:UInt, _ r:UInt) -> UInt {
+        if MemoryLayout<Int>.size == 8 { // 64 bit
+            func rotl(_ x:UInt, _ r:UInt) -> UInt {
                 return (x << r) | (x >> (64 - r))
             }
-            func fmix(kk: UInt) -> UInt {
+            func fmix(_ kk: UInt) -> UInt {
                 var k = kk
                 k ^= k >> 33
                 k = k &* 0xff51afd7ed558ccd
@@ -53,7 +53,7 @@ public final class SGLMath {
             let c2:UInt = 0x4cf5ad432745937f
             var h1:UInt = c1 ^ UInt(nums.count)
             var h2:UInt = c2 ^ UInt(nums.count)
-            var data = nums.generate()
+            var data = nums.makeIterator()
             while true {
                 if let k = data.next() {
                     var k1 = UInt(bitPattern: k) &* c1
@@ -106,278 +106,7 @@ public final class SGLMath {
         }
     }
 
-    public static func SGLsin<T:FloatingPointArithmeticType>(angle:T) -> T {
-        if let z = angle as? Double {
-            return sin(z) as! T
-        }
-        if let z = angle as? Float {
-            return sinf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLcos<T:FloatingPointArithmeticType>(angle:T) -> T {
-        if let z = angle as? Double {
-            return cos(z) as! T
-        }
-        if let z = angle as? Float {
-            return cosf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLtan<T:FloatingPointArithmeticType>(angle:T) -> T {
-        if let z = angle as? Double {
-            return tan(z) as! T
-        }
-        if let z = angle as? Float {
-            return tanf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLasin<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return asin(z) as! T
-        }
-        if let z = x as? Float {
-            return asinf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLacos<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return acos(z) as! T
-        }
-        if let z = x as? Float {
-            return acosf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLatan<T:FloatingPointArithmeticType>(y:T, _ x:T) -> T {
-        if let z = y as? Double {
-            return atan2(z, x as! Double) as! T
-        }
-        if let z = y as? Float {
-            return atan2f(z, x as! Float) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLatan<T:FloatingPointArithmeticType>(yoverx:T) -> T {
-        if let z = yoverx as? Double {
-            return atan(z) as! T
-        }
-        if let z = yoverx as? Float {
-            return atanf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLsinh<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return sinh(z) as! T
-        }
-        if let z = x as? Float {
-            return sinhf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLcosh<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return cosh(z) as! T
-        }
-        if let z = x as? Float {
-            return coshf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLtanh<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return tanh(z) as! T
-        }
-        if let z = x as? Float {
-            return tanhf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLasinh<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return asinh(z) as! T
-        }
-        if let z = x as? Float {
-            return asinhf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLacosh<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return acosh(z) as! T
-        }
-        if let z = x as? Float {
-            return acoshf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLatanh<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return atanh(z) as! T
-        }
-        if let z = x as? Float {
-            return atanhf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLpow<T:FloatingPointArithmeticType>(x:T, _ y:T) -> T {
-        if let z = x as? Double {
-            return pow(z, y as! Double) as! T
-        }
-        if let z = x as? Float {
-            return powf(z, y as! Float) as! T
-        }
-        preconditionFailure()
-    }
-    public static func SGLexp<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return exp(z) as! T
-        }
-        if let z = x as? Float {
-            return expf(z) as! T
-        }
-        preconditionFailure()
-    }
-    public static func SGLlog<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return log(z) as! T
-        }
-        if let z = x as? Float {
-            return logf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLexp2<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return exp2(z) as! T
-        }
-        if let z = x as? Float {
-            return exp2f(z) as! T
-        }
-        preconditionFailure()
-    }
-    public static func SGLlog2<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return log2(z) as! T
-        }
-        if let z = x as? Float {
-            return log2f(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLsqrt<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return sqrt(z) as! T
-        }
-        if let z = x as? Float {
-            return sqrtf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLfloor<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return floor(z) as! T
-        }
-        if let z = x as? Float {
-            return floorf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLtrunc<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return trunc(z) as! T
-        }
-        if let z = x as? Float {
-            return truncf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLround<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return round(z) as! T
-        }
-        if let z = x as? Float {
-            return roundf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLceil<T:FloatingPointArithmeticType>(x:T) -> T {
-        if let z = x as? Double {
-            return ceil(z) as! T
-        }
-        if let z = x as? Float {
-            return ceilf(z) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLmodf<T:FloatingPointArithmeticType>(x:T, inout _ i:T) -> T {
-        if let z = x as? Double {
-            return withUnsafeMutablePointer(&i) {
-                return modf(z, UnsafeMutablePointer<Double>($0)) as! T
-            }
-        }
-        if let z = x as? Float {
-            return withUnsafeMutablePointer(&i) {
-                return modff(z, UnsafeMutablePointer<Float>($0)) as! T
-            }
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLfma<T:FloatingPointArithmeticType>(a:T, _ b:T, _ c:T) -> T {
-        if let z = a as? Double {
-            return fma(z, b as! Double, c as! Double) as! T
-        }
-        if let z = a as? Float {
-            return fmaf(z, b as! Float, c as! Float) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLfrexp<T:FloatingPointArithmeticType>(x:T, inout _ exp:Int32) -> T {
-        if let z = x as? Double {
-            return frexp(z, &exp) as! T
-        }
-        if let z = x as? Float {
-            return frexpf(z, &exp) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func SGLldexp<T:FloatingPointArithmeticType>(x:T, _ exp:Int32) -> T {
-        if let z = x as? Double {
-            return ldexp(z, exp) as! T
-        }
-        if let z = x as? Float {
-            return ldexpf(z, exp) as! T
-        }
-        preconditionFailure()
-    }
-
-    public static func floatFromHalf(i:UInt16) -> Float {
+    public static func floatFromHalf(_ i:UInt16) -> Float {
         let ret:UInt32
         var exponent = UInt32(i) & 0x7c00
         let sign = UInt32(i & 0x8000) << 16
@@ -405,11 +134,13 @@ public final class SGLMath {
             // Normal
             ret = sign | ((UInt32(i & 0x7fff) + 0x1c000) << 13)
         }
-        return unsafeBitCast(ret, Float.self)
+        //return unsafeBitCast(ret, to: Float.self)
+        return Float(bitPattern: ret)
     }
 
-    public static func halfFromFloat(f:Float) -> UInt16 {
-        let fbits = unsafeBitCast(f, UInt32.self)
+    public static func halfFromFloat(_ f:Float) -> UInt16 {
+        //let fbits = unsafeBitCast(f, to: UInt32.self)
+        let fbits = f.bitPattern
         let sign = UInt16((fbits & 0x80000000) >> 16)
         var exponent = fbits & 0x7f800000
         var significand:UInt32 = fbits & 0x007fffff
